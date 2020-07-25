@@ -1,37 +1,34 @@
 <script>
-    import { breakLength, sessionLength, ticking } from './store.js'
-    let initialSeconds = $sessionLength;
-    let sessionMode = true;
+  import {
+    breakLength,
+    sessionLength,
+    ticking,
+    seconds,
+    mode,
+  } from "./store.js";
+  import { playBeep } from "./Beep.svelte";
+  import formatTime from "./utils/formatTime.js";
+  import { SESSION_MODE, BREAK_MODE } from "./constants";
 
-    const countdown = () => {
-        if($ticking) {
-            initialSeconds = initialSeconds - 1;
-                if(initialSeconds === 0) {
-                    if(sessionMode) {
-                        sessionMode = false;
-                        initialSeconds = $breakLength;
-                    }
-                    else {
-                        sessionMode = true;
-                        initialSeconds = $sessionLength;
-                    }
-                }
+  const countdown = () => {
+    if ($ticking) {
+      seconds.update((n) => n - 1);
+      if (!$seconds) {
+        if ($mode === SESSION_MODE) {
+          mode.update((mode) => BREAK_MODE);
+          seconds.update((_) => $breakLength);
+        } else {
+          mode.update((mode) => SESSION_MODE);
+          seconds.update((_) => $sessionLength);
         }
+        playBeep();
+      }
     }
-
-    setInterval(countdown, 1000)
-
-    const formatTime = (sec) => {
-        let date = new Date(0);
-        date.setSeconds(sec);
-        return date.toISOString().substr(14, 5);
-    }
+  };
+  setInterval(countdown, 1000);
 </script>
 
 <main>
-	<h1 id="timer-label">{sessionMode?'session':'break'}</h1>
-    <h2 id="time-left">{formatTime(initialSeconds)}</h2>
+  <h1 id="timer-label">{$mode === SESSION_MODE ? 'Session' : 'Break'}</h1>
+  <h2 id="time-left">{formatTime($seconds)}</h2>
 </main>
-
-<style>
-</style>
