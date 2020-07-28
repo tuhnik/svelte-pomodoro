@@ -9,10 +9,8 @@
   };
 </script>
 
-<main>
-  <audio
-    bind:this={beep}
-    id="beep"
-    src="./assets/BeepSound.wav"
-    preload="auto" />
-</main>
+<audio
+  bind:this={beep}
+  id="beep"
+  src="./assets/BeepSound.wav"
+  preload="auto" />

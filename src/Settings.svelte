@@ -14,34 +14,34 @@
   } from "./constants.js";
 
   const breakLengthInc = () => {
-    if ($ticking || $breakLength >= MAX_MINUTES) return;
-    breakLength.update((minutes) => minutes + MINUTE);
-    if ($mode === BREAK_MODE) {
-      seconds.update((_) => $breakLength);
+    if ($breakLength >= 60) return;
+    breakLength.update((n) => n + 1);
+    if (!$ticking && $mode === BREAK_MODE) {
+      seconds.update((_) => $breakLength * MINUTE);
     }
   };
 
   const breakLengthDec = () => {
-    if ($ticking || $breakLength <= MINUTE) return;
-    breakLength.update((minutes) => minutes - MINUTE);
-    if ($mode === BREAK_MODE) {
-      seconds.update((_) => $breakLength);
+    if ($breakLength <= 1) return;
+    breakLength.update((n) => n - 1);
+    if (!$ticking && $mode === BREAK_MODE) {
+      seconds.update((_) => $breakLength * MINUTE);
     }
   };
 
   const sessionLengthInc = () => {
-    if ($ticking || $sessionLength >= MAX_MINUTES) return;
-    sessionLength.update((minutes) => minutes + MINUTE);
-    if ($mode === SESSION_MODE) {
-      seconds.update((_) => $sessionLength);
+    if ($sessionLength > 60) return;
+    sessionLength.update((n) => n + 1);
+    if (!$ticking && $mode === SESSION_MODE) { 
+      seconds.update((_) => $sessionLength * MINUTE);
     }
   };
 
   const sessionLengthDec = () => {
-    if ($ticking || $sessionLength <= MINUTE) return;
-    sessionLength.update((minutes) => minutes - MINUTE);
-    if ($mode === SESSION_MODE) {
-      seconds.update((_) => $sessionLength);
+    if ($sessionLength <= 1) return;
+    sessionLength.update((n) => n - 1);
+    if (!$ticking && $mode === SESSION_MODE) {
+      seconds.update((_) => $sessionLength * MINUTE);
     }
   };
 </script>
@@ -60,17 +60,6 @@
     min-width: 6.5em;
   }
 
-  .disabled > div {
-    background: #c1c1c1;
-    border: 2px solid #848484;
-    cursor: not-allowed;
-  }
-
-  .disabled .fa {
-    color: gray;
-    cursor: not-allowed;
-  }
-
   i {
     cursor: pointer;
     font-size: 1.5em;
@@ -78,19 +67,17 @@
   }
 </style>
 
-<main>
-  <div class={$ticking ? 'settings disabled' : 'settings'}>
+  <div class='settings'>
     <div class="break">
       <div id="break-label">Break length</div>
-      <i class="fa fa-arrow-up" on:click={breakLengthInc} />
-      <div class="counter">{$breakLength / 60}</div>
-      <i class="fa fa-arrow-down" on:click={breakLengthDec} />
+      <i class="fa fa-arrow-up" on:click={breakLengthInc}  id="break-increment"/>
+      <div class="counter" id="break-length" >{$breakLength}</div>
+      <i class="fa fa-arrow-down" on:click={breakLengthDec} id="break-decrement"/>
     </div>
     <div class="session">
       <div id="session-label">Session length</div>
-      <i class="fa fa-arrow-up" on:click={sessionLengthInc} />
-      <div class="counter">{$sessionLength / 60}</div>
-      <i class="fa fa-arrow-down" on:click={sessionLengthDec} />
+      <i class="fa fa-arrow-up" on:click={sessionLengthInc} id="session-increment"/>
+      <div class="counter" id="session-length">{$sessionLength}</div>
+      <i class="fa fa-arrow-down" on:click={sessionLengthDec} id="session-decrement"/>
     </div>
   </div>
-</main>

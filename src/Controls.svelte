@@ -9,20 +9,20 @@
   import { stopBeep } from "./Beep.svelte";
   import { MINUTE, SESSION_MODE } from "./constants";
 
-  const startTicking = () => {
+  const toggleTicking = () => {
     ticking.update((n) => !n);
   };
   const reset = () => {
-    ticking.update(() => false);
-    breakLength.update(() => 5 * MINUTE);
-    sessionLength.update(() => 25 * MINUTE);
-    seconds.update(() => 25 * MINUTE);
-    mode.update(() => SESSION_MODE);
+    ticking.set(false);
+    mode.set(SESSION_MODE)
+    seconds.set(25 * 60)
+    breakLength.set(5)
+    sessionLength.set(25);
     stopBeep();
   };
 </script>
 
-<main>
-  <button on:click={startTicking}>{$ticking ? 'pause' : 'start'}</button>
-  <button on:click={reset}>reset</button>
-</main>
+<div>
+  <button id="start_stop" on:click={toggleTicking}>{$ticking ? 'pause' : 'start'}</button>
+  <button id="reset" on:click={reset}>reset</button>
+</div>

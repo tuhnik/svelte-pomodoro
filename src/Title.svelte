@@ -12,6 +12,5 @@
   }
 </style>
 
-<main>
-  <h1>Pomodoro clock</h1>
-</main>
+
+<h1>Pomodoro clock</h1>

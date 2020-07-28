@@ -8,27 +8,41 @@
   } from "./store.js";
   import { playBeep } from "./Beep.svelte";
   import formatTime from "./utils/formatTime.js";
-  import { SESSION_MODE, BREAK_MODE } from "./constants";
+  import { SESSION_MODE, BREAK_MODE, MINUTE } from "./constants";
 
-  const countdown = () => {
+  function countdown() {
     if ($ticking) {
       seconds.update((n) => n - 1);
-      if (!$seconds) {
+      if($seconds === 0) {
         if ($mode === SESSION_MODE) {
           mode.update((mode) => BREAK_MODE);
-          seconds.update((_) => $breakLength);
+        }
+        else {
+          mode.update((mode)=> SESSION_MODE)
+        }
+      }
+      if ($seconds < 0) {
+        if ($mode === SESSION_MODE) {
+          seconds.update((_) => $breakLength * MINUTE);
         } else {
-          mode.update((mode) => SESSION_MODE);
-          seconds.update((_) => $sessionLength);
+          seconds.update((_) => $sessionLength * MINUTE);
         }
         playBeep();
       }
     }
   };
-  setInterval(countdown, 1000);
+  
+  ticking.subscribe(value=>{
+    if(!value) {
+      window.clearInterval(document.pomodoroTimer)
+      }
+    else {
+      document.pomodoroTimer = window.setInterval(countdown, 1000);
+    }
+  })
 </script>
 
-<main>
-  <h1 id="timer-label">{$mode === SESSION_MODE ? 'Session' : 'Break'}</h1>
+<div>
+  <h2 id="timer-label">{$mode === SESSION_MODE ? 'Session' : 'Break'}</h2>
   <h2 id="time-left">{formatTime($seconds)}</h2>
-</main>
+</div>
